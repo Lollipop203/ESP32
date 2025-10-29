@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FF6B9D">
+    <title>🚗 Điều Khiển Xe</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi8J+agiBEaeG7gXUgS2hp4bq/biBYZSIsInNob3J0X25hbWUiOiLwn5qyIFhlIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNGRjZCOUQiLCJ0aGVtZV9jb2xvciI6IiNGRjZCOUQifQ==">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B9D, #FFB86C);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '🎈🎨🌟🚀✨🎪';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            font-size: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            color: white;
+            font-size: 32px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .status {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .status.disconnected {
+            background: #FF4757;
+            color: white;
+        }
+
+        .status.connected {
+            background: #2ED573;
+            color: white;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .connect-btn {
+            background: linear-gradient(135deg, #FFA500, #FF6347);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(255,100,100,0.4);
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .connect-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 15px rgba(255,100,100,0.3);
+        }
+
+        .speed-control {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .speed-control h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .speed-display {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            color: #FF6B9D;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .speed-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .speed-btn {
+            background: linear-gradient(135deg, #FFB86C, #FF6B9D);
+            color: white;
+            border: none;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255,107,157,0.4);
+            transition: all 0.2s;
+        }
+
+        .speed-btn:active {
+            transform: scale(0.9);
+        }
+
+        .controls {
+            background: rgba(255,255,255,0.95);
+            padding: 30px 20px;
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dpad {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+            aspect-ratio: 1;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            font-size: 48px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .control-btn:active::before {
+            opacity: 1;
+        }
+
+        .control-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        }
+
+        .control-btn.forward {
+            grid-column: 2;
+            grid-row: 1;
+            background: linear-gradient(135deg, #2ED573, #20bf6b);
+        }
+
+        .control-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+            background: linear-gradient(135deg, #FFB86C, #FFA500);
+        }
+
+        .control-btn.stop {
+            grid-column: 2;
+            grid-row: 2;
+            background: linear-gradient(135deg, #FF4757, #ff3838);
+            font-size: 36px;
+        }
+
+        .control-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+            background: linear-gradient(135deg, #FFB86C, #FFA500);
+        }
+
+        .control-btn.backward {
+            grid-column: 2;
+            grid-row: 3;
+            background: linear-gradient(135deg, #5352ed, #3742fa);
+        }
+
+        .label {
+            font-size: 14px;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: white;
+            font-size: 16px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 24px; }
+            .connect-btn { font-size: 20px; padding: 15px 30px; }
+            .control-btn { font-size: 36px; }
+            .speed-display { font-size: 36px; }
+            .speed-btn { width: 70px; height: 70px; font-size: 30px; }
+        }
+
+        .emoji-animate {
+            display: inline-block;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="header">
+        <h1><span class="emoji-animate">🚗</span> Điều Khiển Xe Ô Tô</h1>
+        <div class="status disconnected" id="status">❌ Chưa kết nối</div>
+    </div>
+
+    <div class="container">
+        <button class="connect-btn" id="connectBtn">
+            🔗 KẾT NỐI XE
+        </button>
+
+        <div class="speed-control">
+            <h3>⚡ Tốc Độ</h3>
+            <div class="speed-display" id="speedDisplay">200</div>
+            <div class="speed-buttons">
+                <button class="speed-btn" id="speedDown">−</button>
+                <button class="speed-btn" id="speedUp">+</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="dpad">
+                <button class="control-btn forward" id="forward">
+                    ⬆️
+                </button>
+                <button class="control-btn left" id="left">
+                    ⬅️
+                </button>
+                <button class="control-btn stop" id="stop">
+                    ⏹️<br><span class="label"></span>
+                </button>
+                <button class="control-btn right" id="right">
+                    ➡️
+                </button>
+                <button class="control-btn backward" id="backward">
+                    ⬇️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Made with ❤️ for Kids
+    </div>
+
+    <script>
+        // Tạo ngôi sao
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // BLE Configuration
+        const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+        const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+
+        let bluetoothDevice = null;
+        let characteristic = null;
+        let currentSpeed = 200;
+
+        // Elements
+        const connectBtn = document.getElementById('connectBtn');
+        const statusDiv = document.getElementById('status');
+        const speedDisplay = document.getElementById('speedDisplay');
+        const controlBtns = document.querySelectorAll('.control-btn');
+        const speedUpBtn = document.getElementById('speedUp');
+        const speedDownBtn = document.getElementById('speedDown');
+
+        // Connect to BLE
+        connectBtn.addEventListener('click', async () => {
+            try {
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    filters: [{ name: 'ESP32_CAR' }],
+                    optionalServices: [SERVICE_UUID]
+                });
+
+                const server = await bluetoothDevice.gatt.connect();
+                const service = await server.getPrimaryService(SERVICE_UUID);
+                characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+                statusDiv.textContent = '✅ Đã kết nối';
+                statusDiv.className = 'status connected';
+                connectBtn.textContent = '🎉 XE ĐÃ SẴN SÀNG!';
+                connectBtn.style.background = 'linear-gradient(135deg, #2ED573, #20bf6b)';
+
+                bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+            } catch (error) {
+                alert('❌ Không thể kết nối! Hãy thử lại nhé! 😊');
+                console.error(error);
+            }
+        });
+
+        function onDisconnected() {
+            statusDiv.textContent = '❌ Chưa kết nối';
+            statusDiv.className = 'status disconnected';
+            connectBtn.textContent = '🔗 KẾT NỐI XE';
+            connectBtn.style.background = 'linear-gradient(135deg, #FFA500, #FF6347)';
+            characteristic = null;
+        }
+
+        // Send command
+        async function sendCommand(command) {
+            if (!characteristic) {
+                alert('⚠️ Hãy kết nối xe trước nhé! 🚗');
+                return;
+            }
+            try {
+                await characteristic.writeValue(new TextEncoder().encode(command));
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Control buttons
+        document.getElementById('forward').addEventListener('click', () => {
+            sendCommand('F');
+            animateButton('forward');
+        });
+
+        document.getElementById('backward').addEventListener('click', () => {
+            sendCommand('B');
+            animateButton('backward');
+        });
+
+        document.getElementById('left').addEventListener('click', () => {
+            sendCommand('L');
+            animateButton('left');
+        });
+
+        document.getElementById('right').addEventListener('click', () => {
+            sendCommand('R');
+            animateButton('right');
+        });
+
+        document.getElementById('stop').addEventListener('click', () => {
+            sendCommand('S');
+            animateButton('stop');
+        });
+
+        // Speed control
+        speedUpBtn.addEventListener('click', () => {
+            sendCommand('+');
+            currentSpeed = Math.min(255, currentSpeed + 25);
+            updateSpeedDisplay();
+        });
+
+        speedDownBtn.addEventListener('click', () => {
+            sendCommand('-');
+            currentSpeed = Math.max(0, currentSpeed - 25);
+            updateSpeedDisplay();
+        });
+
+        function updateSpeedDisplay() {
+            speedDisplay.textContent = currentSpeed;
+            speedDisplay.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                speedDisplay.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        function animateButton(id) {
+            const btn = document.getElementById(id);
+            btn.style.transform = 'scale(0.85)';
+            setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // Disable controls initially
+        controlBtns.forEach(btn => {
+            btn.style.transition = 'all 0.2s';
+        });
+
+        speedDisplay.style.transition = 'all 0.2s';
+    </script>
+</body>
+</html>
