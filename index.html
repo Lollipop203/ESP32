@@ -398,22 +398,22 @@
                 const service = await server.getPrimaryService(SERVICE_UUID);
                 characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
 
-                statusDiv.textContent = '✅ Đã kết nối';
+                statusDiv.textContent = 'Đã kết nối';
                 statusDiv.className = 'status connected';
-                connectBtn.textContent = '🎉 XE ĐÃ SẴN SÀNG!';
+                connectBtn.textContent = 'XE ĐÃ SẴN SÀNG!';
                 connectBtn.style.background = 'linear-gradient(135deg, #2ED573, #20bf6b)';
 
                 bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
             } catch (error) {
-                alert('❌ Không thể kết nối! Hãy thử lại nhé! 😊');
+                alert('Không thể kết nối! Hãy thử lại nhé! 😊');
                 console.error(error);
             }
         });
 
         function onDisconnected() {
-            statusDiv.textContent = '❌ Chưa kết nối';
+            statusDiv.textContent = 'Chưa kết nối';
             statusDiv.className = 'status disconnected';
-            connectBtn.textContent = '🔗 KẾT NỐI XE';
+            connectBtn.textContent = 'KẾT NỐI XE';
             connectBtn.style.background = 'linear-gradient(135deg, #FFA500, #FF6347)';
             characteristic = null;
         }
